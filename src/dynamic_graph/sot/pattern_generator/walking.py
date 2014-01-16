@@ -37,7 +37,7 @@ def initPg(robot):
   robot.pg.parseCmd(":ZMPShiftParameters 0.015 0.015 0.015 0.015")
   robot.pg.parseCmd(":TimeDistributeParameters 2.0 3.5 1.0 3.0")
   robot.pg.parseCmd(":UpperBodyMotionParameters 0.0 -0.5 0.0")
-  robot.pg.parseCmd(":comheight 0.814")
+  robot.pg.parseCmd(":comheight 0.747093")
   robot.pg.parseCmd(":SetAlgoForZmpTrajectory Morisawa")
 
   plug(robot.dynamic.position,robot.pg.position)
@@ -265,7 +265,7 @@ def pushTasks(robot,solver):
 
   solver.push(robot.tasks['waist'])
   solver.push(robot.tasks['robot_task_position'])
-  robot.tasks['com'].controlGain.value = 180
+  robot.tasks['com'].controlGain.value = 250
 
 def createGraph(robot,solver):
   initRobotGeom(robot)
@@ -313,7 +313,6 @@ def walkAndrei(robot):
      robot.device.name == 'HRP2JRL':
     robot.pg.parseCmd(":setfeetconstraint XY 0.09 0.06")
   elif robot.device.name == 'HRP4LIRMM':
-    robot.pg.parseCmd(":setfeetconstraint XY 0.04 0.04")
+    robot.pg.parseCmd(":setfeetconstraint XY 0.07 0.06")
   elif robot.device.name == 'ROMEO':
     robot.pg.parseCmd(":setfeetconstraint XY 0.04 0.04")
-
