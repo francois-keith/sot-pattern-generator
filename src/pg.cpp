@@ -41,6 +41,7 @@
 #include <sot/core/matrix-homogeneous.hh>
 
 #include <sot-pattern-generator/pg.h>
+#include <jrl/dynamics/urdf/parser.hh>
 
 using namespace std;
 namespace dynamicgraph {
@@ -544,6 +545,66 @@ namespace dynamicgraph {
       return false;
     }
 
+    bool PatternGenerator::buildModelUrdf( void )
+    {
+      jrl::dynamics::urdf::Parser parser;
+
+      // Creating the humanoid robot.
+      dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
+      CjrlHumanoidDynamicRobot * aHDR = 0;
+
+// #ifndef WITH_HRP2DYNAMICS
+//       aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
+// #else
+//       aHDR = new Chrp2OptHumanoidDynamicRobot(&aRobotDynamicsObjectConstructor);
+// #endif
+      // Parsing the file.
+      string RobotFileName = m_urdfDirectory + m_urdfMainFile;
+      //dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR,RobotFileName,m_xmlRankFile,m_xmlSpecificitiesFile);
+      aHDR = parser.parse(RobotFileName);
+      bool ok=true;
+      sotDEBUG(2) << "Juste after parsing" << endl;
+      if (aHDR!=0)
+      	{
+      	  CjrlFoot * rightFoot = aHDR->rightFoot();
+      	  if (rightFoot!=0)
+      	    {
+      	      vector3d AnkleInFoot;
+      	      rightFoot->getAnklePositionInLocalFrame(AnkleInFoot);
+	      	 std::cout
+		   << "Model"
+		   << AnkleInFoot
+		   << std::endl;
+		m_AnkleSoilDistance = fabs(AnkleInFoot[2]);
+		//m_AnkleSoilDistance = AnkleInFoot[2];
+      	    }
+      	  else ok=false;
+      	}
+      else ok=false;
+      printf("6");
+      if (!ok)
+      	{
+      	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
+      					       "Error while creating humanoid robot dynamical model.",
+      					       "(PG creation process for object %s).",
+      					       getName().c_str());
+      	}
+      try
+      	{
+      	  m_PGI = PatternGeneratorJRL::patternGeneratorInterfaceFactory(aHDR);
+      	}
+      catch (...)
+      	{
+      	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
+      					       "Error while allocating the Pattern Generator.",
+      					       "(PG creation process for object %s).",
+      					       getName().c_str());
+      	}
+      printf("5");
+      m_init = true;
+      return false;
+    }
+
     PatternGenerator::
     ~PatternGenerator( void )
     {
@@ -591,6 +652,16 @@ namespace dynamicgraph {
       m_PreviewControlParametersFile = filename;
     }
 
+    void PatternGenerator::
+    setUrdfDirectory( const std::string& filename )
+    {
+      m_urdfDirectory = filename;
+    }
+    void PatternGenerator::
+    setUrdfMainFile( const std::string& filename )
+    {
+      m_urdfMainFile = filename;
+    }
 
     /* --- COMPUTE -------------------------------------------------------------- */
     /* --- COMPUTE -------------------------------------------------------------- */
@@ -1230,6 +1301,14 @@ namespace dynamicgraph {
 		 makeCommandVoid1(*this,&PatternGenerator::setVrmlMainFile,
 				  docCommandVoid1("Set VRML main file.",
 						  "string (file name)")));
+     addCommand("setUrdfDir",
+		 makeCommandVoid1(*this,&PatternGenerator::setUrdfDirectory,
+				  docCommandVoid1("Set Urdf directory.",
+						  "string (path name)")));
+      addCommand("setUrdf",
+		 makeCommandVoid1(*this,&PatternGenerator::setUrdfMainFile,
+				  docCommandVoid1("Set Urdf main file.",
+						  "string (file name)")));
       addCommand("setXmlSpec",
 		 makeCommandVoid1(*this,&PatternGenerator::setXmlSpecificitiesFile,
 				  docCommandVoid1("Set Xml file for specicifities.",
@@ -1247,6 +1326,10 @@ namespace dynamicgraph {
       addCommand("buildModel",
        		 makeCommandVoid0(*this,
 				  (void (PatternGenerator::*) (void))&PatternGenerator::buildModel,
+				  docCommandVoid0("From the files, parse and build.")));
+     addCommand("buildModelUrdf",
+       		 makeCommandVoid0(*this,
+				  (void (PatternGenerator::*) (void))&PatternGenerator::buildModelUrdf,
 				  docCommandVoid0("From the files, parse and build.")));
       addCommand("initState",
        		 makeCommandVoid0(*this,
@@ -1354,6 +1437,10 @@ namespace dynamicgraph {
 	{  cmdArgs>>filename; setVrmlDirectory( filename );  }
       else if( cmdLine == "setVrml" )
 	{  cmdArgs>>filename; setVrmlMainFile( filename );  }
+      else if( cmdLine == "setUrdfDir" )
+	{  cmdArgs>>filename; setUrdfDirectory( filename );  }
+      else if( cmdLine == "setUrdf" )
+	{  cmdArgs>>filename; setUrdfMainFile( filename );  }
       else if( cmdLine == "setXmlSpec" )
 	{  cmdArgs>>filename; setXmlSpecificitiesFile( filename );  }
       else if( cmdLine == "setXmlRank" )
@@ -1365,6 +1452,8 @@ namespace dynamicgraph {
 	  cmdArgs>>filename; setParamPreviewFile( filename );
 	  cmdArgs>>filename; setVrmlDirectory( filename );
 	  cmdArgs>>filename; setVrmlMainFile( filename );
+	  cmdArgs>>filename; setUrdfDirectory( filename );
+	  cmdArgs>>filename; setUrdfMainFile( filename );
 	  cmdArgs>>filename; setXmlSpecificitiesFile( filename );
 	  cmdArgs>>filename; setXmlRankFile( filename );
 	}
@@ -1380,6 +1469,8 @@ namespace dynamicgraph {
 	      else if( "xmlspecificity" == filetype ) { os << m_xmlSpecificitiesFile << std::endl; }
 	      else if( "xmlrank" == filetype ) { os << m_xmlRankFile << std::endl; }
 	      else if( "vrmlmain" == filetype ) { os << m_vrmlMainFile << std::endl; }
+	      else if( "urdfmain" == filetype ) { os << m_urdfMainFile << std::endl; }
+	      else if( "urdfdir" == filetype ) { os << m_urdfDirectory << std::endl; }
 	      else filespecified = false;
 	    }
 	  if( ! filespecified )
@@ -1387,7 +1478,9 @@ namespace dynamicgraph {
 	      os << "  - VRML Directory:\t\t\t" << m_vrmlDirectory <<endl
 		 << "  - XML Specificities File:\t\t" << m_xmlSpecificitiesFile <<endl
 		 << "  - XML Rank File:\t\t\t" << m_xmlRankFile <<endl
-		 << "  - VRML Main File:\t\t\t" << m_vrmlMainFile <<endl;
+		 << "  - VRML Main File:\t\t\t" << m_vrmlMainFile <<endl
+		 << "  - Urdf Directory:\t\t\t" << m_urdfDirectory <<endl
+           << "  - Urdf Main File:\t\t\t" << m_urdfMainFile <<endl;
 	    }
 	}
       else if( cmdLine == "buildModel" )
