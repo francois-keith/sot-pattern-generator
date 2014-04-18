@@ -138,6 +138,9 @@ namespace dynamicgraph {
       /*! \brief Name of the VRML file which containes the robot's model. */
       std::string m_urdfMainFile; 
 
+      /* \brief Special joints map for the parser */
+      std::map<std::string, std::string> specialJoints_;     
+
      /*! @} */
 
       /*! \brief Boolean variable to initialize the object by loading an object. */
@@ -214,7 +217,10 @@ namespace dynamicgraph {
       
       /*! \brief Set the name of the urdf file. */
       void setUrdfMainFile( const std::string& filename );
-      
+ 
+      /*! \brief Set mapping between a link and actual robot name */
+       void addJointMapping(const std::string& link, const std::string& repName);
+     
       /*! \brief Give access directly to the pattern generator...
 	You really have to know what your are doing. */
       pg::PatternGeneratorInterface * GetPatternGeneratorInterface()
@@ -558,3 +564,4 @@ namespace dynamicgraph {
 } // namespace dynamicgraph
 
 #endif // #ifndef __SOT_PATTERN_GENERATOR_H__
+
