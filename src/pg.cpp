@@ -553,14 +553,20 @@ namespace dynamicgraph {
       dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
       CjrlHumanoidDynamicRobot * aHDR = 0;
 
-// #ifndef WITH_HRP2DYNAMICS
-//       aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
-// #else
-//       aHDR = new Chrp2OptHumanoidDynamicRobot(&aRobotDynamicsObjectConstructor);
-// #endif
+  // #ifndef WITH_HRP2DYNAMICS
+  //       aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
+  // #else 
+  //       aHDR = new Chrp2OptHumanoidDynamicRobot(&aRobotDynamicsObjectConstructor);
+  // #endif
       // Parsing the file.
       string RobotFileName = m_urdfDirectory + m_urdfMainFile;
       //dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR,RobotFileName,m_xmlRankFile,m_xmlSpecificitiesFile);
+      //addJointMapping('BODY','body');
+
+      std::map<std::string, std::string>::const_iterator it = specialJoints_.begin();
+      for (;it!=specialJoints_.end();++it) {
+        parser.specifyREPName(it->first, it->second);
+      }
       aHDR = parser.parse(RobotFileName);
       bool ok=true;
       sotDEBUG(2) << "Juste after parsing" << endl;
@@ -661,6 +667,11 @@ namespace dynamicgraph {
     setUrdfMainFile( const std::string& filename )
     {
       m_urdfMainFile = filename;
+    }
+    void PatternGenerator::
+    addJointMapping(const std::string &link, const std::string &repName)
+    {
+      specialJoints_[link] = repName;
     }
 
     /* --- COMPUTE -------------------------------------------------------------- */
@@ -1309,6 +1320,11 @@ namespace dynamicgraph {
 		 makeCommandVoid1(*this,&PatternGenerator::setUrdfMainFile,
 				  docCommandVoid1("Set Urdf main file.",
 						  "string (file name)")));
+      addCommand("addJointMapping",
+		 makeCommandVoid2(*this,&PatternGenerator::addJointMapping,
+				  docCommandVoid1("Map link names.",
+						  "string (link name)"
+						  "string (rep name)")));
       addCommand("setXmlSpec",
 		 makeCommandVoid1(*this,&PatternGenerator::setXmlSpecificitiesFile,
 				  docCommandVoid1("Set Xml file for specicifities.",
@@ -1441,6 +1457,12 @@ namespace dynamicgraph {
 	{  cmdArgs>>filename; setUrdfDirectory( filename );  }
       else if( cmdLine == "setUrdf" )
 	{  cmdArgs>>filename; setUrdfMainFile( filename );  }
+      else if( cmdLine == "addJointMapping" )
+	{ 
+	  std::string link, repName;
+	  cmdArgs>> link >> repName; 
+	  addJointMapping( link, repName);  } 
+     
       else if( cmdLine == "setXmlSpec" )
 	{  cmdArgs>>filename; setXmlSpecificitiesFile( filename );  }
       else if( cmdLine == "setXmlRank" )
