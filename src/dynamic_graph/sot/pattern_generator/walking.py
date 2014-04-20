@@ -67,6 +67,7 @@ def addPgToUrdfRobot(robot):
   robot.pg = PatternGenerator('pg')
   robot.pg.setUrdfDir('package://romeo_description/urdf/')
   robot.pg.setUrdf('romeo_small.urdf')
+  robot.pg.setSoleParameters(0.1935, 0.121)
   robot.pg.addJointMapping('BODY','body')
 
   print "At this stage"
@@ -355,3 +356,11 @@ def walkAndrei(robot):
   robot.pg.parseCmd(":setfeetconstraint XY 0.02 0.02")
   robot.pg.parseCmd(":setVelReference 0.01 0.0 0.0")
   robot.pg.parseCmd(":HerdtOnline 0.01 0.0 0.0")
+  if robot.device.name == 'HRP2LAAS' or \
+     robot.device.name == 'HRP2JRL':
+    robot.pg.parseCmd(":setfeetconstraint XY 0.09 0.06")
+  elif robot.device.name == 'HRP4LIRMM':
+    robot.pg.parseCmd(":setfeetconstraint XY 0.04 0.04")
+  elif robot.device.name == 'ROMEO':
+    robot.pg.parseCmd(":setfeetconstraint XY 0.04 0.04")
+
