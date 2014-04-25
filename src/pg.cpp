@@ -561,15 +561,8 @@ namespace dynamicgraph {
       dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
       CjrlHumanoidDynamicRobot * aHDR = 0;
 
-  // #ifndef WITH_HRP2DYNAMICS
-  //       aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
-  // #else 
-  //       aHDR = new Chrp2OptHumanoidDynamicRobot(&aRobotDynamicsObjectConstructor);
-  // #endif
       // Parsing the file.
       string RobotFileName = m_urdfDirectory + m_urdfMainFile;
-      //dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR,RobotFileName,m_xmlRankFile,m_xmlSpecificitiesFile);
-      //addJointMapping('BODY','body');
 
       std::map<std::string, std::string>::const_iterator it = specialJoints_.begin();
       for (;it!=specialJoints_.end();++it) {
@@ -577,7 +570,7 @@ namespace dynamicgraph {
       }
       aHDR = parser.parse(RobotFileName);
       bool ok=true;
-      sotDEBUG(2) << "Juste after parsing" << endl;
+
       if (aHDR!=0)
       	{
       	  CjrlFoot * rightFoot = aHDR->rightFoot();
@@ -586,14 +579,12 @@ namespace dynamicgraph {
       	      vector3d AnkleInFoot;
       	      rightFoot->getAnklePositionInLocalFrame(AnkleInFoot);
 	      m_AnkleSoilDistance = fabs(AnkleInFoot[2]);
-	      //m_AnkleSoilDistance = AnkleInFoot[2];
 	      aHDR->leftFoot()->setSoleSize(m_soleLength, m_soleWidth);
 	      aHDR->rightFoot()->setSoleSize(m_soleLength, m_soleWidth);
       	    }
       	  else ok=false;
       	}
       else ok=false;
-      printf("6");
       if (!ok)
       	{
       	  SOT_THROW ExceptionPatternGenerator( ExceptionPatternGenerator::PATTERN_GENERATOR_JRL,
@@ -612,7 +603,6 @@ namespace dynamicgraph {
       					       "(PG creation process for object %s).",
       					       getName().c_str());
       	}
-      printf("5");
       m_init = true;
       return false;
     }
