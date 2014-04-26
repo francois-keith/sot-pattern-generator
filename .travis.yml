@@ -1,6 +1,6 @@
 notifications:
   email:
-  - hpp-source@laas.fr
+  - francois.keith@gmail.com
 env:
   global:
     secure: goTy8NYzvup6j3wRWVi2SdyHB4U+ObWD1l9s3qLudbQl0yO6+ojrcqi1anGKXTWgYZzv0bZXDItXzL74w90HMWhh5I15uIta9bd7WWfgRWgYRqtiMkap+NyPxz84tfTQMfaXxODb8ttpEzemsAQxJ2uPdbgm75nx8bSeeWFne94=
