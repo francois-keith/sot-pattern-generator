@@ -41,6 +41,8 @@ install_dependency stack-of-tasks/dynamic-graph-python
 install_dependency stack-of-tasks/sot-core
 #
 install_dependency francois-keith/romeo-sot
+install_dependency stack-of-tasks/sot-tools
+install_dependency stack-of-tasks/sot-dynamic
 install_dependency stack-of-tasks/sot-romeo
 
 # Compile and run tests
