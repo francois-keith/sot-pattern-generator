@@ -27,3 +27,4 @@ compiler:
 branches:
   only:
   - master
+  - clodic
