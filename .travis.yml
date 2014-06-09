@@ -22,7 +22,6 @@ after_success:
 script: ./.travis/build
 language: cpp
 compiler:
-- clang
 - gcc
 branches:
   only:

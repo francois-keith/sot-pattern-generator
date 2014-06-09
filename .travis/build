@@ -42,7 +42,6 @@ install_dependency stack-of-tasks/dynamic-graph
 install_dependency stack-of-tasks/dynamic-graph-python
 install_dependency stack-of-tasks/sot-core
 
-
 # Compile and run tests
 cd "$build_dir"
 cmake "$root_dir" -DCMAKE_INSTALL_PREFIX="$install_dir"		\
