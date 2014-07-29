@@ -1,4 +1,5 @@
 import sys
+sys.path=['@CMAKE_SOURCE_DIR@/../_travis/install/@CMAKE_INSTALL_LIBDIR@/python2.7/site-packages/']+sys.path
 sys.path=['@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/python2.7/site-packages/']+sys.path
 sys.path=['@CMAKE_CURRENT_BINARY_DIR@/../src/dynamic_graph/sot/']+sys.path
 
