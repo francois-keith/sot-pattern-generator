@@ -1,8 +1,16 @@
+import sys
+sys.path=['@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/python2.7/site-packages/']+sys.path
+sys.path=['@CMAKE_CURRENT_BINARY_DIR@/../src/dynamic_graph/sot/']+sys.path
+
+
+
 # ______________________________________________________________________________
 # ******************************************************************************
 # A simple Herdt walking pattern generator for Romeo.
 # ______________________________________________________________________________
 # ******************************************************************************
+
+print sys.path
 
 # from dynamic_graph.sot.romeo.sot_romeo_controller import *
 # Create the robot.
@@ -16,7 +24,8 @@ plug(robot.device.state, robot.dynamic.position)
 from dynamic_graph.sot.application.velocity.precomputed_tasks import initialize
 solver = initialize ( robot )
 
-from dynamic_graph.sot.pattern_generator.walking import CreateEverythingForPG , walkFewSteps
+import pattern_generator
+from pattern_generator.walking import CreateEverythingForPG , walkFewSteps
 CreateEverythingForPG ( robot , solver )
 walkFewSteps ( robot )
 

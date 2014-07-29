@@ -8,7 +8,7 @@ from dynamic_graph.matlab import matlab
 from dynamic_graph.sot.core import *
 from dynamic_graph.sot.dynamics import *
 from dynamic_graph.sot.core.meta_task_6d import MetaTask6d,toFlags
-from dynamic_graph.sot.pattern_generator import PatternGenerator,Selector
+from pattern_generator import PatternGenerator,Selector
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
 # from dynamic_graph.sot.core import FeatureGeneric, FeaturePoint6d, Task, TaskPD
 from dynamic_graph.sot.core import FeaturePosture
