@@ -54,4 +54,7 @@ cmake "$root_dir" -DCMAKE_INSTALL_PREFIX="$install_dir"		\
 		  -DCMAKE_INSTALL_PREFIX:STRING="$install_dir"
 make
 make test
+if ! [ "$?" -eq "0" ]; then
+  cat Testing/Temporary/LastTest.log
+fi
 make install
